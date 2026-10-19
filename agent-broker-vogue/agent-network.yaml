@@ -1,0 +1,198 @@
+agentNetwork: 2.0.0
+info:
+  label: "Vogue Premiere Agent Network"
+  version: v1
+registry:
+  agents:
+    stylingAgent:
+      info:
+        label: Styling Agent
+      metadata:
+        platform: Other
+        interfaces:
+          a2a_v03:
+            card:
+              name: Styling Agent
+              description: Recommends complete outfits for the customer.
+              url: ${stylingAgent.url}
+              protocolVersion: 0.3.0
+              version: 1.0.0
+              capabilities:
+                pushNotifications: false
+              defaultInputModes:
+                - application/json
+                - text/plain
+              defaultOutputModes:
+                - application/json
+                - text/plain
+              skills:
+                - id: styling-recommend-outfit
+                  name: Recommend Outfit
+                  description: Recommends a complete outfit for a customer's occasion.
+                  tags:
+                    - styling
+                  inputModes:
+                    - application/json
+                    - text/plain
+                  outputModes:
+                    - application/json
+                    - text/plain
+    availabilityAgent:
+      info:
+        label: Availability Agent
+      metadata:
+        platform: Other
+        interfaces:
+          a2a_v03:
+            card:
+              name: Availability Agent
+              description: Verifies stock and sizes across Product 360 and the OMS.
+              url: ${availabilityAgent.url}
+              protocolVersion: 0.3.0
+              version: 1.0.0
+              capabilities:
+                pushNotifications: false
+              defaultInputModes:
+                - application/json
+                - text/plain
+              defaultOutputModes:
+                - application/json
+                - text/plain
+              skills:
+                - id: availability-check-stock
+                  name: Check Availability
+                  description: Verifies stock and size availability for products.
+                  tags:
+                    - availability
+                  inputModes:
+                    - application/json
+                    - text/plain
+                  outputModes:
+                    - application/json
+                    - text/plain
+    loyaltyAgent:
+      info:
+        label: Loyalty Agent
+      metadata:
+        platform: Other
+        interfaces:
+          a2a_v03:
+            card:
+              name: Loyalty Agent
+              description: Applies tier-specific loyalty perks.
+              url: ${loyaltyAgent.url}
+              protocolVersion: 0.3.0
+              version: 1.0.0
+              capabilities:
+                pushNotifications: false
+              defaultInputModes:
+                - application/json
+                - text/plain
+              defaultOutputModes:
+                - application/json
+                - text/plain
+              skills:
+                - id: loyalty-apply-perks
+                  name: Apply Loyalty Perks
+                  description: Applies tier-specific perks to the customer.
+                  tags:
+                    - loyalty
+                  inputModes:
+                    - application/json
+                    - text/plain
+                  outputModes:
+                    - application/json
+                    - text/plain
+  mcps:
+    commerceMcp:
+      info:
+        label: Commerce MCP Server
+      metadata:
+        transport:
+          kind: streamableHttp
+          path: /mcp
+  llms:
+    openai:
+      info:
+        label: OpenAI
+      metadata:
+        platform: OpenAI
+context:
+  connections:
+    styling_agent_connection:
+      kind: a2a
+      ref:
+        name: stylingAgent
+      url: ${stylingAgent.url}
+    availability_agent_connection:
+      kind: a2a
+      ref:
+        name: availabilityAgent
+      url: ${availabilityAgent.url}
+    loyalty_agent_connection:
+      kind: a2a
+      ref:
+        name: loyaltyAgent
+      url: ${loyaltyAgent.url}
+    commerce_mcp_connection:
+      kind: mcp
+      ref:
+        name: commerceMcp
+      url: ${commerceMcp.url}
+      authentication:
+        kind: oauth2-obo
+        flow: oauth2-token-exchange
+        timeout: 50000
+        tokenEndpoint: ${oboKeycloak.tokenEndpoint}
+        clientId: ${oboKeycloak.clientId}
+        clientSecret: ${oboKeycloak.clientSecret}
+        targetType: audience
+        targetValue: commerce-mcp-obo
+        scope: openid
+    openai_connection:
+      kind: llm
+      ref:
+        name: openai
+      url: ${openai.url}
+      authentication:
+        kind: apiKey
+        apiKey: ${openai.apiKey}
+brokers:
+  vogue_premiere:
+    kind: AgentScript
+    implementation: ./brokers/vogue-premiere.agent
+    interfaces:
+      a2a:
+        card:
+          name: Vogue Premiere Styling Concierge
+          description: A personal luxury fashion assistant that handles styling, availability, loyalty, and orders.
+          version: 1.0.0
+          capabilities:
+            streaming: true
+            pushNotifications: false
+          defaultInputModes:
+            - application/json
+            - text/plain
+          defaultOutputModes:
+            - application/json
+            - text/plain
+          skills:
+            - id: vogue-style-concierge
+              name: Vogue Style Concierge
+              description: Handles customer-facing styling, availability, loyalty, and order interactions for Vogue Premiere.
+              examples:
+                - "I have a dinner in Napa next Saturday."
+                - "What loyalty perks do I have?"
+                - "Are these all in stock in my size?"
+                - "Place the order"
+              tags:
+                - styling
+                - loyalty
+                - orders
+                - vogue
+              inputModes:
+                - application/json
+                - text/plain
+              outputModes:
+                - application/json
+                - text/plain

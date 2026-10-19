@@ -1,0 +1,75 @@
+{
+  "main": "agent-network.yaml",
+  "name": "vogue-premiere-broker-v2-template",
+  "classifier": "agentic-network",
+  "organizationId": "9ba88ceb-fba8-483a-9c8a-6d0f56beee98",
+  "descriptorVersion": "1.0.0",
+  "apiVersion": "v1",
+  "tags": [
+    "agentscript",
+    "vogue-premiere"
+  ],
+  "groupId": "9ba88ceb-fba8-483a-9c8a-6d0f56beee98",
+  "assetId": "vogue-premiere-broker-v2-template",
+  "version": "1.0.0",
+  "dependencies": [],
+  "metadata": {
+    "variables": {
+      "stylingAgent": {
+        "url": {
+          "description": "Styling A2A agent URL (v2 mock — filters on 'Customer: <username>' inlined in message text).",
+          "default": "https://www.a2d-ai.com/api/platform/06a61882-fe1f-4b17-8cdd-6cf8e21e5846/a2a",
+          "secret": false
+        }
+      },
+      "availabilityAgent": {
+        "url": {
+          "description": "Availability A2A agent URL (v2 mock — filters on 'Customer: <username>' inlined in message text).",
+          "default": "https://www.a2d-ai.com/api/platform/1b1d4d65-7d31-4d39-b7cc-a0d8bf902aec/a2a",
+          "secret": false
+        }
+      },
+      "loyaltyAgent": {
+        "url": {
+          "description": "Loyalty A2A agent URL (v2 mock — filters on 'Customer: <username>' inlined in message text).",
+          "default": "https://www.a2d-ai.com/api/platform/e1361d2a-fe3e-4c42-9eb4-f229b05089db/a2a",
+          "secret": false
+        }
+      },
+      "commerceMcp": {
+        "url": {
+          "description": "Commerce MCP server URL (CloudHub-deployed Mule app that validates JWTs and enforces persona ownership via SQL). Exposes get_customer_profile, get_shipping_status, and create_order.",
+          "default": "https://commerce-mcp-rjw8bf.rajrd4-2.usa-e1.cloudhub.io",
+          "secret": false
+        }
+      },
+      "oboKeycloak": {
+        "tokenEndpoint": {
+          "description": "Keycloak token endpoint for OBO token exchange (RFC 8693).",
+          "default": "https://lemur-12.cloud-iam.com/auth/realms/vogue-premiere-ws/protocol/openid-connect/token",
+          "secret": false
+        },
+        "clientId": {
+          "description": "Confidential OBO client id (also the target audience commerce-mcp-obo).",
+          "default": "commerce-mcp-obo",
+          "secret": false
+        },
+        "clientSecret": {
+          "description": "Confidential OBO client secret.",
+          "secret": true
+        }
+      },
+      "openai": {
+        "url": {
+          "description": "Own metered Model Proxy (test-proxy) in this org. /models now 200 via conditional DW header-injection (see reference/docs/llm-proxy.md). Upstream = Azure demos proxy.",
+          "default": "https://llm-proxy.workshops.mulesoft.com/openai/v1/",
+          "secret": false
+        },
+        "apiKey": {
+          "description": "OpenAI API key",
+          "secret": true
+        }
+      }
+    }
+  }
+}
